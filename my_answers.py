@@ -36,7 +36,15 @@ def build_part1_RNN(window_size):
 
 ### TODO: return the text input with only ascii lowercase and the punctuation given below included.
 def cleaned_text(text):
+    import string
+
+    unique_chars = list(set([i for i in text]))
+    all_chars = string.ascii_lowercase
     punctuation = ['!', ',', '.', ':', ';', '?']
+
+    nonenglish_chars = list(set([i for i in unique_chars if i not in all_chars and i not in punctuation]))
+    for i in nonenglish_chars:
+        text = text.replace(i, ' ')
 
     return text
 
@@ -46,9 +54,21 @@ def window_transform_text(text, window_size, step_size):
     inputs = []
     outputs = []
 
-    return inputs,outputs
+    for i in range(0, (len(text) - window_size), step_size):
+        inputs.append(text[i:(i + window_size)])
+        outputs.append(text[i + window_size])
+
+    return inputs, outputs
 
 # TODO build the required RNN model: 
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
+
+    input_shape = (window_size, num_chars)
+    model = Sequential()
+    model.add(LSTM(200, input_shape=input_shape))
+    model.add(Dense(num_chars, activation='softmax'))
+    return model
+
+
     pass
